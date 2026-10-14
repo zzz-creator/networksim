@@ -1,0 +1,12 @@
+{
+  "name": "networksim-verify",
+  "private": true,
+  "description": "Dev-only verification harness for networksim. The app itself stays no-build: index.html loads plain <script> tags and has zero runtime dependencies. Nothing in this file is shipped to the browser.",
+  "scripts": {
+    "verify": "node tools/verify.js",
+    "verify:quiet": "node tools/verify.js --quiet"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}

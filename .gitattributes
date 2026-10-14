@@ -1,0 +1,16 @@
+# Normalise line endings on commit, check out per-platform. The working copy is
+# CRLF on Windows; git stores LF so a diff never shows a whole file as changed.
+* text=auto
+
+# The app's own source: keep it text so git never treats it as binary.
+*.js   text
+*.css  text
+*.html text
+*.md   text
+*.json text
+
+# Nothing binary is tracked, but be explicit rather than rely on sniffing.
+*.png  binary
+*.jpg  binary
+*.ico  binary
+*.woff binary

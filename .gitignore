@@ -1,0 +1,25 @@
+# dev-only harness -- not part of the app (the browser never loads any of this).
+# package-lock.json IS committed: the harness has one devDependency and pinning
+# it is what keeps `npm run verify` reproducible.
+node_modules/
+
+# editor / OS noise
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# stray artefacts
+err.log
+*.log
+*.bak
+*.orig
+
+# Local overrides. Nothing secret belongs in this repo; if a config ever needs a
+# credential, commit the .example twin and keep the real one here.
+.env
+.env.*
+!.env.example
+*.local.json
