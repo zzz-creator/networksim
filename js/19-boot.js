@@ -1266,7 +1266,68 @@ $("segTheme")
   .querySelectorAll("button")
   .forEach((b) => (b.onclick = () => applyTheme(b.getAttribute("data-theme"))));
 
-const KOFI_URL = "https://ko-fi.com/networksim";
+const GOOGLE_FORM_URL = "";
+
+function appDiagnostics() {
+  const L = [];
+  const row = (k, v) => L.push((k + " ").padEnd(20, " ") + " : " + v);
+  const n = (a) => (a || []).length;
+
+  row("version", "v" + APP_VERSION);
+  row("collected", new Date().toLocaleString());
+
+  const uad = navigator.userAgentData;
+  row(
+    "browser",
+    (uad && uad.brands
+      ? uad.brands.map((b) => b.brand + " " + b.version).join(", ")
+      : navigator.userAgent) || "unknown",
+  );
+  row("platform", navigator.platform || "unknown");
+  row("language", navigator.language || "unknown");
+  row(
+    "viewport",
+    window.innerWidth +
+      "x" +
+      window.innerHeight +
+      " @dpr" +
+      (window.devicePixelRatio || 1),
+  );
+  row(
+    "layout",
+    window.matchMedia && window.matchMedia("(max-width:860px)").matches
+      ? "narrow (mobile breakpoint)"
+      : "wide",
+  );
+  row("touch", "ontouchstart" in window ? "yes" : "no");
+
+  row("mode", appMode);
+  row("theme", document.documentElement.getAttribute("data-theme") || "unknown");
+  row("hints", typeof hintsOn !== "undefined" && hintsOn ? "on" : "off");
+
+  row(
+    "topology",
+    n(DB.devices) +
+      " devices, " +
+      n(DB.hosts) +
+      " hosts, " +
+      n(DB.segments) +
+      " segments, " +
+      n(DB.links) +
+      " links",
+  );
+  row("where", window.__nsWhere || "simulator");
+
+  const errs = window.__nsErrors || [];
+  L.push("");
+  if (!errs.length) {
+    L.push("Recent JS errors: none");
+  } else {
+    L.push("Recent JS errors (" + errs.length + "):");
+    errs.forEach((e) => L.push("    " + e.t + "  " + e.kind + ": " + e.msg));
+  }
+  return L.join("\n");
+}
 
 function feedbackPromptHtml() {
   return (
@@ -1274,33 +1335,37 @@ function feedbackPromptHtml() {
     t("fbNudgeMsg") +
     ' <button type="button" class="fb-nudge-link" onclick="openFeedbackModal()">' +
     t("fbNudgeCta") +
-    "</button> · " +
-    t("fbSupportMsg") +
-    ' <button type="button" class="fb-nudge-link" onclick="openSupportModal()">' +
-    t("fbSupportCta") +
     "</button></div>"
   );
 }
 function openFeedbackModal(opts) {
+  const wantRoad = !!(opts && opts.roadmap);
+  const formReady = /^https?:\/\//i.test(GOOGLE_FORM_URL);
   openModal(`
-    <h2 style="font-family:var(--mono)">ⓘ networksim <span class="appver" style="color:var(--muted);font-size:12px;font-weight:400">v${APP_VERSION}</span></h2>
-    <div class="ab-sec" style="color:var(--muted)">${t("fbIntro")}</div>
-    <h3 class="ab-h">${icon("chat", "ico-a")}${t("fbTitle")}</h3>
-    <div id="abFbForm">
-      <div class="mrow">
-        <div class="mfield"><label>${t("fbNameLabel")}</label><input id="fbName" autocomplete="off" placeholder="${t("fbNamePh")}"></div>
-        <div class="mfield"><label>${t("fbEmailLabel")}</label><input id="fbEmail" type="email" autocomplete="off" placeholder="${t("fbEmailPh")}"></div>
+    <div class="fbf-head">
+      <h2 style="font-family:var(--mono)">ⓘ networksim <span class="appver" style="color:var(--muted);font-size:12px;font-weight:400">v${APP_VERSION}</span></h2>
+      <div class="ab-sec" style="color:var(--muted)">${t("fbIntro")}</div>
+    </div>
+    <div class="fbf-tabs" role="tablist">
+      <button type="button" role="tab" id="fbfTabFb" aria-controls="fbfPaneFb" aria-selected="${wantRoad ? "false" : "true"}">${t("fbTabFeedback")}</button>
+      <button type="button" role="tab" id="fbfTabRoad" aria-controls="fbfPaneRoad" aria-selected="${wantRoad ? "true" : "false"}">${t("fbTabRoadmap")}</button>
+    </div>
+    <div class="fbf-pane${wantRoad ? "" : " show"}" id="fbfPaneFb" role="tabpanel" aria-labelledby="fbfTabFb">
+      ${
+        formReady
+          ? `<iframe class="fbf-frame" title="${t("fbTitle")}" src="${esc(GOOGLE_FORM_URL)}" loading="lazy" referrerpolicy="no-referrer"></iframe>`
+          : `<div class="ab-sec" style="flex:1 1 auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;border:1px dashed var(--line2);border-radius:11px">${t("fbFormNote")}</div>`
+      }
+      <div class="fbf-diag">
+        <div class="fbf-diag-t"><b>${t("fbDiagTitle")}</b>${t("fbDiagHint")}</div>
+        <button class="btn" id="fbfCopy">${t("fbDiagBtn")}</button>
+        <button class="btn" id="fbfShow">${t("fbDiagShow")}</button>
+        <button class="btn" id="abClose">${t("fbCancel")}</button>
       </div>
-      <div class="mfield"><label>${t("fbTypeLabel")}</label><select id="fbType"><option value="bug">${t("fbTypeBug")}</option><option value="idea">${t("fbTypeIdea")}</option><option value="question">${t("fbTypeQuestion")}</option><option value="other">${t("fbTypeOther")}</option></select></div>
-      <div class="mfield"><label>${t("fbMessageLabel")}</label><textarea id="fbMessage" rows="4" maxlength="2000" placeholder="${t("fbMessagePh")}" style="width:100%;background:var(--panel2);border:1px solid var(--line2);color:var(--txt);padding:9px 10px;border-radius:9px;font-size:13px;font-family:var(--sans);resize:vertical;box-sizing:border-box"></textarea></div>
-      <div style="display:flex;justify-content:flex-end;gap:9px"><button class="btn" id="abClose">${t("fbCancel")}</button><button class="btn primary" id="fbSubmit">${t("fbSubmit")}</button></div>
+      <textarea id="fbfDiagText" readonly hidden style="flex:0 0 auto;height:120px;margin-top:10px;background:var(--panel2);border:1px solid var(--line2);border-radius:9px;color:var(--txt);font:11.5px var(--mono);padding:9px;resize:vertical;white-space:pre"></textarea>
     </div>
-    <div id="abFbSent" style="display:none;text-align:center;padding:16px 0">
-      <b>${icon("checkcircle", "ico-a")}${t("fbSentTitle")}</b>
-      <p style="color:var(--muted);margin-top:6px">${t("fbSentMsg")}</p>
-      <button class="btn" id="abClose2" style="margin-top:10px">${t("fbCancel")}</button>
-    </div>
-    <h3 class="ab-h">${t("abRoadH")}</h3>
+    <div class="fbf-pane scroll${wantRoad ? " show" : ""}" id="fbfPaneRoad" role="tabpanel" aria-labelledby="fbfTabRoad">
+      <h3 class="ab-h">${t("abRoadH")}</h3>
     ${[
       {
         cat: "abRoadCatDone",
@@ -1470,59 +1535,54 @@ function openFeedbackModal(opts) {
       )
       .join("")}
     <div class="ab-sec" style="color:var(--muted);margin-top:10px">${t("abRoadNote")}</div>
+    </div>
   `);
+  // openModal() clears the class list, so the fill modifier goes on afterwards.
+  modalBox.classList.add("fbfill", "show");
+
+  const fbPane = $("fbfPaneFb");
+  const roadPane = $("fbfPaneRoad");
+  const tabFb = $("fbfTabFb");
+  const tabRoad = $("fbfTabRoad");
+  const pick = (isFb) => {
+    fbPane.classList.toggle("show", isFb);
+    roadPane.classList.toggle("show", !isFb);
+    tabFb.setAttribute("aria-selected", String(isFb));
+    tabRoad.setAttribute("aria-selected", String(!isFb));
+  };
+  tabFb.onclick = () => pick(true);
+  tabRoad.onclick = () => pick(false);
+  pick(!wantRoad);
+
   $("abClose").onclick = closeModal;
 
-  if (opts && opts.roadmap) {
-    const ver =
-      modalBox.querySelector(".ab-cat[open] .ab-ver[open]") ||
-      modalBox.querySelector(".ab-cat[open] .ab-ver");
-    if (ver) {
-      ver.open = true;
-      try {
-        ver.scrollIntoView({ block: "start" });
-      } catch (e) {}
-    }
-  }
-  $("fbSubmit").onclick = () => {
-    const msg = $("fbMessage").value.trim().slice(0, 2000);
-    if (!msg) {
-      $("fbMessage").focus();
-      return;
-    }
-    $("fbSubmit").disabled = true;
-    const body = new URLSearchParams({
-      "form-name": "feedback",
-      "bot-field": "",
-      name: $("fbName").value,
-      email: $("fbEmail").value,
-      type: $("fbType").value,
-      message: msg,
-    });
-    fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body.toString(),
-    })
-      .catch(() => {})
-      .then(() => {
-        $("abFbForm").style.display = "none";
-        $("abFbSent").style.display = "block";
-        $("abClose2").onclick = closeModal;
-      });
+  const diagBox = $("fbfDiagText");
+  const fillDiag = () => {
+    if (!diagBox.value) diagBox.value = appDiagnostics();
+    return diagBox.value;
+  };
+  $("fbfShow").onclick = () => {
+    fillDiag();
+    const showing = diagBox.hasAttribute("hidden");
+    if (showing) diagBox.removeAttribute("hidden");
+    else diagBox.setAttribute("hidden", "");
+    $("fbfShow").textContent = t(showing ? "fbDiagHide" : "fbDiagShow");
+  };
+  $("fbfCopy").onclick = () => {
+    copyText(fillDiag()).then(
+      () => setStatus(t("fbDiagCopied")),
+      () => {
+        // Clipboard API can reject on an insecure origin; show the text so the
+        // reporter can still select it by hand.
+        diagBox.removeAttribute("hidden");
+        diagBox.focus();
+        diagBox.select();
+        setStatus(t("fbDiagFallback"), true);
+      },
+    );
   };
 }
-function openSupportModal() {
-  openModal(`
-    <h2 style="font-family:var(--mono)">${icon("energy", "ico-a")}${t("abSupportH")}</h2>
-    <div class="ab-sec">${t("abSupportText")}</div>
-    <div id="abKofiPanel" style="margin-top:12px"><iframe title="Ko-fi" src="${KOFI_URL}/?hidefeed=true&widget=true&embed=true" style="width:100%;height:min(620px,62vh);border:1px solid var(--line2);border-radius:9px;background:#f9f9f9"></iframe></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn" id="abClose">${t("fbCancel")}</button></div>
-  `);
-  $("abClose").onclick = closeModal;
-}
 $("btnFeedback").onclick = openFeedbackModal;
-if ($("btnSupport")) $("btnSupport").onclick = () => openSupportModal();
 
 const APP_VERSION = "0.7";
 document.querySelectorAll(".appver").forEach((e) => {

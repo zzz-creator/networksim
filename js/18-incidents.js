@@ -3198,6 +3198,10 @@ function startTask(task, origin, skipConfirm) {
   taskOrigin = origin || "tasks";
   const run = () => {
     clearTaskCheckAnim();
+    // Recorded for appDiagnostics() so a bug report says which task broke.
+    try {
+      window.__nsWhere = "task " + (task && (task.id || task.name)) + " (" + taskOrigin + ")";
+    } catch (e) {}
     DB = task.setup();
     migrateDB();
     selectedId = null;

@@ -24,7 +24,10 @@ function courseStepControls(p){
 }
 function courseStepper(p,count,show){
   let idx=0;
-  const upd=()=>{ try{show(idx);}catch(e){} const c=$(p+'count'); if(c)c.textContent=(idx+1)+' / '+count; const pb=$(p+'prev'); if(pb)pb.disabled=idx===0; const nb=$(p+'next'); if(nb)nb.disabled=idx===count-1; };
+  const upd=()=>{ try{show(idx);}catch(e){} const c=$(p+'count'); if(c)c.textContent=(idx+1)+' / '+count; const pb=$(p+'prev'); if(pb)pb.disabled=idx===0; const nb=$(p+'next'); if(nb)nb.disabled=idx===count-1;
+    // Record the position for appDiagnostics(); idx is only visible in here.
+    try{var cid=(typeof activeCourse!=='undefined'&&activeCourse&&activeCourse.id)||'course'; window.__nsWhere=cid+' / '+p+' / step '+(idx+1)+' of '+count;}catch(e){}
+  };
   const pb=$(p+'prev'); if(pb)pb.onclick=()=>{ if(idx>0){idx--;upd();} };
   const nb=$(p+'next'); if(nb)nb.onclick=()=>{ if(idx<count-1){idx++;upd();} };
   upd();

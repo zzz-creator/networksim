@@ -39,7 +39,6 @@
   <header id="appHeader">
     <h1 class="title"><span class="dot"></span>networksim</h1>
     <button id="btnFeedback" class="title-info" data-ico="chat" title="About · roadmap · feedback" aria-label="About · roadmap · feedback"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3v4l4-4h9a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"></path></svg><span>Feedback</span></button>
-    <button id="btnSupport" class="title-info" data-ico="energy" style="color:var(--cyan)" title="Support the project (Ko-fi)" aria-label="Support the project (Ko-fi)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="4" width="8" height="17" rx="2"></rect><path d="M8 7.5h8"></path><path d="M12.5 9.5 10.8 13.5h1.5L11.3 18"></path></svg><span>Support</span></button>
     <input class="topo-name" id="topoName" value="New topology" spellcheck="false" aria-label="Topology name">
     <div class="spacer"></div>
     <div class="tabs" role="tablist">
@@ -330,11 +329,6 @@
 <button class="mobtest" id="mobTestBtn" hidden="" data-ico="ping" aria-label="Go to the test panel"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.6"></circle><path d="M8.5 8.5a5 5 0 0 0 0 7"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M5.7 5.7a9 9 0 0 0 0 12.6"></path><path d="M18.3 5.7a9 9 0 0 1 0 12.6"></path></svg><span>Test</span></button>
 
 
-<form method="post" name="feedback" style="display:none"><input type="hidden" name="form-name" value="feedback">
-  <input name="bot-field">
-  <input name="name"><input name="email"><select name="type"><option>bug</option><option>idea</option><option>question</option><option>other</option></select><textarea name="message"></textarea>
-</form>
-
 <div class="toast" id="toast" aria-live="polite"></div>
 <div class="tour-live" id="tourLive" role="status" aria-live="polite"></div>
 <div class="modal-bg" id="modalBg" role="dialog" aria-modal="true"><div class="modal" id="modalBox" tabindex="-1"></div></div>
@@ -356,8 +350,7 @@
       <summary data-ico="sparkle"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 13.7 9 19 10.7 13.7 12.4 12 18l-1.7-5.6L5 10.7 10.3 9z"></path></svg><b class="appver">v0.7</b> · <span>What's new</span><span class="wn-arrow">›</span></summary>
       <ul class="wn-list" data-nolp=""><li>New courses: <b>DHCP</b> – how a device comes by an address at all, from the four DORA messages through lease time and reservations to a drained range and a rogue server on the network. And <b>splitting a network into subnets</b> – how many addresses you really need, where a subnet starts and ends, and what breaks your own plan.</li><li>Hands-on tasks where there used to be only text: split a flat network into VLANs, build a trunk between switches, add a default route, look inside the MAC table – and walk a network with no rules at all to see just how much gets through.</li><li><b>TLS inspection</b> on the IDS/IPS sensor: the sensor cannot see into encrypted traffic until you turn it on. And the cost is right there – it can read the content only because every client has to trust the company authority.</li><li><b>802.1X on the socket</b>: the port opens only after authentication against RADIUS. A visitor laptop has nothing to identify itself with and stays out – and when RADIUS goes down, company machines cannot authenticate either. You get to try both sides of that coin.</li><li><b>BPDU guard</b>: an access port shuts down when a switch shows up behind it, so a foreign box under a desk cannot take over as root bridge and reroute the traffic.</li><li><b>Voice priority (QoS)</b> on a congested link: calls stop stuttering, but file copies get no faster – priority is not magic, it is the order in the queue. The test result tells you so.</li></ul>
       <div style="margin:0 12px 4px;font-size:12px;text-align:center"><button type="button" id="wnMore" style="background:none;border:none;color:var(--cyan);cursor:pointer;text-decoration:underline;padding:2px 4px;font-size:12px;font-family:inherit">More news in About</button></div>
-      <div style="margin:0 12px 9px;padding-top:9px;border-top:1px solid var(--line2);font-size:12px;color:var(--muted);text-align:center"><span>Like where networksim is heading?</span> <a href="https://ko-fi.com/networksim" target="_blank" rel="noopener" style="color:var(--cyan);white-space:nowrap">Support further development</a></div>
-    </details>
+      </details>
     <div style="font-size:13.5px;line-height:1.6">networksim is a <b>computer-network simulator with a built-in learning platform</b>. In the <b>courses</b> (from the basics to advanced level) you’ll understand how networks work — visual, step by step and jargon-free. In the <b>simulator</b> you then build and test your own network: where traffic flows, how far an attacker reaches, and what survives a failure. Not sure where to start? Take the course.</div>
     <div style="font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.5">The app is in active development – something broken or missing? Let me know (bugs, ideas, what's missing).</div>
     <div class="wMobileHint" data-ico="info">The app works on phones, but it's cramped. For a smoother experience I recommend a computer.</div>

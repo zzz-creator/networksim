@@ -103,6 +103,7 @@ function openModal(html) {
   _modalSeq++;
   _portsAllOpen = false;
   modalBox.classList.remove("wide");
+  modalBox.classList.remove("fbfill");
   modalBox.innerHTML = html;
   wrapCourseFigures(modalBox);
   _cfigObs.observe(modalBox, { childList: true, subtree: true });
@@ -124,6 +125,7 @@ function closeModal() {
   _cfigObs.disconnect();
   modalBg.classList.remove("show");
   modalBox.classList.remove("wide");
+  modalBox.classList.remove("fbfill");
   modalBox.innerHTML = "";
   if (modalCloseHook) {
     const cb = modalCloseHook;
@@ -153,7 +155,6 @@ const MODAL_OPENERS = [
   "openPresetInfo",
   "openTasksModal",
   "openFeedbackModal",
-  "openSupportModal",
   "openWelcomePresets",
   "shareLink",
   "openCourse",
