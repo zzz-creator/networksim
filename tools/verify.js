@@ -420,7 +420,7 @@ async function main() {
       // Compare against COURSE_COUNT rather than a literal, so adding a course
       // cannot leave this check quietly asserting the old number.
       const count = await page.evaluate(LOAD_ALL_COURSES);
-      checkEq("COURSE_COUNT matches the loaded course files", count, 30);
+      checkEq("COURSE_COUNT matches the loaded course files", count, 32);
 
       const { problems, info } = await page.evaluate(COLLECT_COURSES);
       check(
